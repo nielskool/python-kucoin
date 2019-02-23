@@ -1403,7 +1403,7 @@ class Client(object):
         
         if symbol:
             data['symbol'] = symbol
-        data['base'] = ba
+        data['base'] = base
         
         return self._get('prices', False, data=data)
 
