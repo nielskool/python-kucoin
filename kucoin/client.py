@@ -1404,7 +1404,7 @@ class Client(object):
                 'symbol': symbol
             }
         
-        return self._get('market/allTickers', False, data=data)
+        return self._get('prices', False, data=data)
 
     def get_24hr_stats(self, symbol):
         """Get 24hr stats for a symbol. Volume is in base currency units. open, high, low are in quote currency units.
