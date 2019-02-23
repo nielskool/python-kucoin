@@ -1399,10 +1399,11 @@ class Client(object):
         
     def get_fiat_price(self, base='USD', symbol=None):
         
-        data = {
-                'base': base,
-                'symbol': symbol
-            }
+        data = {}
+        
+        if symbol:
+            data['symbol'] = symbol
+        data['base'] = ba
         
         return self._get('prices', False, data=data)
 
