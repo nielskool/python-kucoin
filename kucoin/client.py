@@ -148,11 +148,17 @@ class Client(object):
             # generate signature
             nonce = int(time.time() * 1000)
             kwargs['headers']['KC-API-TIMESTAMP'] = str(nonce)
+            kwargs['headers']['KC-API-KEY'] = self.API_KEY
+            kwargs['headers']['KC-API-PASSPHRASE'] = self.API_PASSPHRASE
             kwargs['headers']['KC-API-SIGN'] = self._generate_signature(nonce, method, full_path, kwargs['data'])
+            kwargs['headers']["Content-Type"] = "application/json"
 
         if kwargs['data'] and method == 'get':
             kwargs['params'] = kwargs['data']
             del(kwargs['data'])
+
+        if signed and kwargs['data']:
+            kwargs['data'] = json.dumps(kwargs['data'], separators=(',', ':'), ensure_ascii=False)
 
         response = getattr(self.session, method)(uri, **kwargs)
         return self._handle_response(response)
@@ -1005,13 +1011,13 @@ class Client(object):
             'side': side,
             'type': self.ORDER_LIMIT,
             'price': price,
-            'amount': amount
+            'size': amount
         }
 
         if order_id:
-            data['orderOid'] = order_id
+            data['clientOid'] = order_id
         else:
-            data['orderOid'] = str(uuid.uuid4())
+            data['clientOid'] = str(uuid.uuid4())
         if remark:
             data['remark'] = remark
         if stp:
@@ -1026,7 +1032,7 @@ class Client(object):
             data['stop'] = stop
             data['stop_price'] = stop_price
 
-        return self._post('order', True, data=data)
+        return self._post('orders', True, data=data)
 
     def cancel_order(self, order_id):
         """Cancel an order
